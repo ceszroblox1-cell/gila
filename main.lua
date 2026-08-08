@@ -1,9 +1,8 @@
 -- ============================================================
---  GAG2 AutoFarm – Main Loader & UI
---  (c) 2025 – Load all modules from raw GitHub
+--  GAG2 AutoFarm – Main Loader & UI (FIXED)
 -- ============================================================
 
-local repoUrl = "https://raw.githubusercontent.com/ceszroblox1-cell/gila/refs/heads/main/lib/"  -- GANTI DENGAN URL REPO ANDA
+local repoUrl = "https://raw.githubusercontent.com/ceszroblox1-cell/gila/refs/heads/main/lib/"  -- PERBAIKI
 
 -- Fungsi untuk memuat modul dengan error handling
 local function loadModule(name)
@@ -19,7 +18,7 @@ local function loadModule(name)
     return result
 end
 
--- Muat semua modul secara urut (Utils harus pertama)
+-- Muat semua modul
 local Utils = loadModule("Utils")
 local Farming = loadModule("Farming")
 local Economy = loadModule("Economy")
@@ -27,19 +26,12 @@ local Pets = loadModule("Pets")
 local Steal = loadModule("Steal")
 local Loot = loadModule("Loot")
 
--- Gabungkan semua fungsi ke dalam tabel global (opsional)
-_G.GAG2 = {
-    Utils = Utils,
-    Farming = Farming,
-    Economy = Economy,
-    Pets = Pets,
-    Steal = Steal,
-    Loot = Loot,
-}
+if not Farming then
+    error("Farming modul gagal dimuat! Periksa file dan URL.")
+end
 
--- Fungsi untuk menampilkan GUI utama (menggunakan UI library dari Utils atau built-in)
+-- ========== GUI ==========
 local function createMainUI()
-    -- Buat ScreenGui dan Frame utama
     local screenGui = Instance.new("ScreenGui")
     screenGui.Name = "GAG2_UI"
     screenGui.Parent = game.Players.LocalPlayer.PlayerGui
@@ -54,7 +46,6 @@ local function createMainUI()
     mainFrame.Draggable = true
     mainFrame.Parent = screenGui
 
-    -- Title
     local title = Instance.new("TextLabel")
     title.Size = UDim2.new(1, 0, 0, 40)
     title.BackgroundTransparency = 1
@@ -64,7 +55,6 @@ local function createMainUI()
     title.Font = Enum.Font.SourceSansBold
     title.Parent = mainFrame
 
-    -- Tombol Close
     local closeBtn = Instance.new("TextButton")
     closeBtn.Size = UDim2.new(0.1, 0, 0.07, 0)
     closeBtn.Position = UDim2.new(0.9, 0, 0, 0)
@@ -77,7 +67,6 @@ local function createMainUI()
         screenGui:Destroy()
     end)
 
-    -- Scrolling frame untuk banyak tombol
     local scrollFrame = Instance.new("ScrollingFrame")
     scrollFrame.Size = UDim2.new(0.95, 0, 0.8, 0)
     scrollFrame.Position = UDim2.new(0.025, 0, 0.12, 0)
@@ -139,36 +128,29 @@ local function createMainUI()
         btn.MouseButton1Click:Connect(callback)
     end
 
-    -- --- Tambahkan Toggle & Button ---
-    -- Farming
+    -- Tambahkan toggle & tombol
     createToggle(scrollFrame, "Auto Harvest", function() return Farming.getAutoHarvest() end, function(v) Farming.setAutoHarvest(v) end)
     createToggle(scrollFrame, "Auto Plant", function() return Farming.getAutoPlant() end, function(v) Farming.setAutoPlant(v) end)
     createToggle(scrollFrame, "Auto Water", function() return Farming.getAutoWater() end, function(v) Farming.setAutoWater(v) end)
     createToggle(scrollFrame, "Harvest Mutation Only", function() return Farming.getHarvestMutationOnly() end, function(v) Farming.setHarvestMutationOnly(v) end)
 
-    -- Economy
     createToggle(scrollFrame, "Auto Sell", function() return Economy.getAutoSell() end, function(v) Economy.setAutoSell(v) end)
     createToggle(scrollFrame, "Auto Buy Seed", function() return Economy.getAutoBuySeed() end, function(v) Economy.setAutoBuySeed(v) end)
     createToggle(scrollFrame, "Auto Double or Nothing", function() return Economy.getAutoDoubleOrNothing() end, function(v) Economy.setAutoDoubleOrNothing(v) end)
 
-    -- Pets
     createToggle(scrollFrame, "Auto Buy Pet", function() return Pets.getAutoBuyPet() end, function(v) Pets.setAutoBuyPet(v) end)
     createToggle(scrollFrame, "Auto Equip Best", function() return Pets.getAutoEquipBest() end, function(v) Pets.setAutoEquipBest(v) end)
     createToggle(scrollFrame, "Auto Sell Pets", function() return Pets.getAutoSellPets() end, function(v) Pets.setAutoSellPets(v) end)
 
-    -- Steal
     createToggle(scrollFrame, "Auto Steal", function() return Steal.getAutoSteal() end, function(v) Steal.setAutoSteal(v) end)
     createToggle(scrollFrame, "Anti Steal", function() return Steal.getAntiSteal() end, function(v) Steal.setAntiSteal(v) end)
 
-    -- Loot
     createToggle(scrollFrame, "Auto Pickup", function() return Loot.getAutoPickup() end, function(v) Loot.setAutoPickup(v) end)
     createToggle(scrollFrame, "Auto Claim Mail", function() return Loot.getAutoClaimMail() end, function(v) Loot.setAutoClaimMail(v) end)
 
-    -- Utility
     createToggle(scrollFrame, "Anti AFK", function() return Utils.getAntiAFK() end, function(v) Utils.setAntiAFK(v) end)
     createToggle(scrollFrame, "FPS Boost", function() return Utils.getFpsBoost() end, function(v) Utils.setFpsBoost(v) end)
 
-    -- Tombol aksi manual
     createButton(scrollFrame, "🌾 Harvest Now", function() Farming.harvestNow() end)
     createButton(scrollFrame, "🌱 Plant Now", function() Farming.plantNow() end)
     createButton(scrollFrame, "💰 Sell All Now", function() Economy.sellAllNow() end)
@@ -176,7 +158,6 @@ local function createMainUI()
     createButton(scrollFrame, "📦 Open All Crates", function() Loot.openAllCrates() end)
     createButton(scrollFrame, "🐾 Check Pets", function() Pets.checkThisServer() end)
 
-    -- Footer
     local footer = Instance.new("TextLabel")
     footer.Size = UDim2.new(1, 0, 0, 20)
     footer.Position = UDim2.new(0, 0, 0.95, 0)
@@ -187,37 +168,30 @@ local function createMainUI()
     footer.Font = Enum.Font.SourceSans
     footer.Parent = mainFrame
 
-    print("[UI] GUI siap!")
+    print("[UI] GUI siap! Aktifkan toggle untuk menjalankan fitur.")
 end
 
--- Jalankan UI
 spawn(createMainUI)
 
--- Mulai semua loop otomatis (jika diaktifkan)
+-- Loop utama
 spawn(function()
-    while wait(1) do
-        -- Farming loop
-        if Farming.getAutoHarvest() then Farming.harvestLoop() end
-        if Farming.getAutoPlant() then Farming.plantLoop() end
-        if Farming.getAutoWater() then Farming.waterLoop() end
-        -- Economy loop
-        if Economy.getAutoSell() then Economy.sellLoop() end
-        if Economy.getAutoBuySeed() then Economy.buySeedLoop() end
-        if Economy.getAutoDoubleOrNothing() then Economy.doubleOrNothingLoop() end
-        -- Pets loop
-        if Pets.getAutoBuyPet() then Pets.buyPetLoop() end
-        if Pets.getAutoEquipBest() then Pets.equipBestLoop() end
-        if Pets.getAutoSellPets() then Pets.sellPetsLoop() end
-        -- Steal loop
-        if Steal.getAutoSteal() then Steal.stealLoop() end
-        if Steal.getAntiSteal() then Steal.antiStealLoop() end
-        -- Loot loop
-        if Loot.getAutoPickup() then Loot.pickupLoop() end
-        if Loot.getAutoClaimMail() then Loot.claimMailLoop() end
-        -- Utils
-        if Utils.getAntiAFK() then Utils.antiAFKLoop() end
-        if Utils.getFpsBoost() then Utils.fpsBoostLoop() end
+    while wait(0.5) do
+        if Farming and Farming.getAutoHarvest() then Farming.harvestLoop() end
+        if Farming and Farming.getAutoPlant() then Farming.plantLoop() end
+        if Farming and Farming.getAutoWater() then Farming.waterLoop() end
+        if Economy and Economy.getAutoSell() then Economy.sellLoop() end
+        if Economy and Economy.getAutoBuySeed() then Economy.buySeedLoop() end
+        if Economy and Economy.getAutoDoubleOrNothing() then Economy.doubleOrNothingLoop() end
+        if Pets and Pets.getAutoBuyPet() then Pets.buyPetLoop() end
+        if Pets and Pets.getAutoEquipBest() then Pets.equipBestLoop() end
+        if Pets and Pets.getAutoSellPets() then Pets.sellPetsLoop() end
+        if Steal and Steal.getAutoSteal() then Steal.stealLoop() end
+        if Steal and Steal.getAntiSteal() then Steal.antiStealLoop() end
+        if Loot and Loot.getAutoPickup() then Loot.pickupLoop() end
+        if Loot and Loot.getAutoClaimMail() then Loot.claimMailLoop() end
+        if Utils and Utils.getAntiAFK() then Utils.antiAFKLoop() end
+        if Utils and Utils.getFpsBoost() then Utils.fpsBoostLoop() end
     end
 end)
 
-print("[MAIN] Skrip GAG2 siap digunakan!")
+print("[MAIN] Skrip GAG2 siap! Pastikan modul berhasil di-load.")
