@@ -3,7 +3,7 @@
 --  (c) 2025 – Load all modules from raw GitHub
 -- ============================================================
 
-local repoUrl = "https://raw.githubusercontent.com/ceszroblox1-cell/gila/refs/heads/main/main.lua"  -- GANTI DENGAN URL REPO ANDA
+local repoUrl = "https://raw.githubusercontent.com/ceszroblox1-cell/gila/refs/heads/main/lib/"  -- GANTI DENGAN URL REPO ANDA
 
 -- Fungsi untuk memuat modul dengan error handling
 local function loadModule(name)
