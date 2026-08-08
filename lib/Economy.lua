@@ -5,8 +5,8 @@
 local Economy = {}
 
 -- State
-local autoSell = false
-local autoBuySeed = false
+local autoSell = true
+local autoBuySeed = true
 local autoDoubleOrNothing = false
 local buySeeds = {"Carrot"}
 local sellWhitelist = {}
